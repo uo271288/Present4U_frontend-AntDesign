@@ -1,29 +1,23 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useNavigate } from 'react-router-dom'
 import { backendURL } from "../Globals"
+import { Button, Card, Col, Input, Row, Alert } from "antd"
 
 let LoginComponent = (props) => {
 
     let { setLogin } = props
     let [message, setMessage] = useState([])
-    let [email, setEmail] = useState("")
-    let [password, setPassword] = useState("")
+    let email = useRef("")
+    let password = useRef("")
     let navigate = useNavigate()
-
-    let changeEmail = (e) => {
-        setEmail(e.currentTarget.value)
-    }
-    let changePassword = (e) => {
-        setPassword(e.currentTarget.value)
-    }
 
     let clickLogin = async () => {
         let response = await fetch(backendURL + "/users/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                email: email,
-                password: password
+                email: email.current.input.value,
+                password: password.current.input.value
             })
         })
         let jsonData = await response.json()
@@ -44,22 +38,21 @@ let LoginComponent = (props) => {
                 setMessage(finalError)
             }
         }
+        email.current.input.value = ""
+        password.current.input.value = ""
     }
 
     return (
-        <div className="main-container">
-            <h2>Login</h2>
-            {message != null && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            <div className="center-box">
-                <div className='form-group'>
-                    <input type='text' placeholder='Email' onChange={changeEmail} />
-                </div>
-                <div className='form-group'>
-                    <input type='password' placeholder='Password' onChange={changePassword} />
-                </div>
-                <button onClick={clickLogin}>Login</button>
-            </div>
-        </div>
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                <Card title="Login" style={{ width: "500px" }}>
+                    <Input ref={email} size="large" type="text" placeholder="Your email" />
+                    <Input ref={password} size="large" style={{ marginTop: "10px" }} type="password" placeholder="Your password" />
+                    <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickLogin}>Login</Button>
+                </Card>
+            </Col>
+        </Row>
     )
 }
 
