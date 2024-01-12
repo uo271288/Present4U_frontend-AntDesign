@@ -1,6 +1,7 @@
 import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { useEffect, useState } from "react"
+import { Layout, Menu } from "antd";
 import CreateUserComponent from './Components/CreateUserComponent'
 import CreatePresentComponent from './Components/CreatePresentComponent'
 import ListPresentsComponent from './Components/ListPresentsComponent'
@@ -49,56 +50,64 @@ let App = () => {
     }
   }
 
+  let { Header, Content, Footer } = Layout
+
   return (
-    <div className="App">
-      {!login &&
-        <nav>
-          <ul className='navbar'>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/createUser">Register</Link></li>
-            <li><Link to="/login">Login</Link></li>
-          </ul>
-        </nav>}
-      {login &&
-        <nav>
-          <ul className='navbar'>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/createPresent">Create present</Link></li>
-            <li><Link to="/listPresents">My presents</Link></li>
-            <li><Link to="/listFriends">My friends</Link></li>
-            <li><Link to="/searchFriendsPresents">Search friend's presents</Link></li>
-            <li><Link to="/disconnect" onClick={disconnect}>Disconnect</Link></li>
-          </ul>
-        </nav>}
-      <Routes>
-        <Route path="/" element={
-          <div className='main-container'>
-            <h1>Welcome to Present4U!</h1>
-          </div>
-        } />
-        <Route path="/createUser" element={
-          <CreateUserComponent />
-        } />
-        <Route path="/login" element={
-          <LoginComponent setLogin={setLogin} />
-        } />
-        <Route path="/createPresent" element={
-          <CreatePresentComponent />
-        } />
-        <Route path="/listPresents" element={
-          <ListPresentsComponent />
-        } />
-        <Route path="/modifyPresent/:presentId" element={
-          <ModifyPresentComponent />
-        } />
-        <Route path="/listFriends" element={
-          <ListFriendsComponent />
-        } />
-        <Route path="/searchFriendsPresents" element={
-          <SearchFriendsPresentsComponent />
-        } />
-      </Routes>
-    </div>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Header>
+        {!login &&
+
+          <Menu theme="dark" mode="horizontal" items={[
+            { key: "menuHome", label: <Link to="/">Home</Link> },
+            { key: "menuRegister", label: <Link to="/createUser">Register</Link> },
+            { key: "menuLogin", label: <Link to="/login">Login</Link> }
+          ]} />
+        }
+        {login &&
+
+          <Menu theme="dark" mode="horizontal" items={[
+            { key: "menuHome", label: <Link to="/">Home</Link> },
+            { key: "menuCreatePresent", label: <Link to="/createPresent">Create present</Link> },
+            { key: "menuListPresents", label: <Link to="/listPresents">My presents</Link> },
+            { key: "menuListFriends", label: <Link to="/listFriends">My friends</Link> },
+            { key: "menuSearchFriendsPresents", label: <Link to="/searchFriendsPresents">Search friend's presents</Link> },
+            { key: "menuDisconnect", label: <Link to="/disconnect" onClick={disconnect}>Disconnect</Link> }
+          ]} />
+        }
+      </Header>
+
+      <Content style={{ padding: "20px 50px" }}>
+        <Routes>
+          <Route path="/" element={
+            <div className='main-container'>
+              <h1>Welcome to Present4U!</h1>
+            </div>
+          } />
+          <Route path="/createUser" element={
+            <CreateUserComponent />
+          } />
+          <Route path="/login" element={
+            <LoginComponent setLogin={setLogin} />
+          } />
+          <Route path="/createPresent" element={
+            <CreatePresentComponent />
+          } />
+          <Route path="/listPresents" element={
+            <ListPresentsComponent />
+          } />
+          <Route path="/modifyPresent/:presentId" element={
+            <ModifyPresentComponent />
+          } />
+          <Route path="/listFriends" element={
+            <ListFriendsComponent />
+          } />
+          <Route path="/searchFriendsPresents" element={
+            <SearchFriendsPresentsComponent />
+          } />
+        </Routes>
+      </Content>
+      <Footer style={{ textAlign: "center" }}>My website</Footer>
+    </Layout>
   )
 }
 
