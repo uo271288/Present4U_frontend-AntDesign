@@ -10,7 +10,7 @@ let SearchFriendsPresentsComponent = () => {
 
     useEffect(() => {
         searchPresents()
-    }, [])
+    })
 
     let changeFriendEmail = (e) => {
         setFriendEmail(e.currentTarget.value)

@@ -9,7 +9,7 @@ let ListPresentsComponent = () => {
 
     useEffect(() => {
         getPresents()
-    }, [])
+    })
 
     let getPresents = async () => {
         let response = await fetch(backendURL + "/presents?apiKey=" + localStorage.getItem("apiKey"))

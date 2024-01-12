@@ -19,7 +19,7 @@ let App = () => {
 
   useEffect(() => {
     checkLogin()
-  }, [])
+  })
 
   let checkLogin = async () => {
     if (localStorage.getItem("apiKey")) {

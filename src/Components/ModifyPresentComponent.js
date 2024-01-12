@@ -10,7 +10,7 @@ let ModifyPresentComponent = () => {
 
     useEffect(() => {
         getPresent()
-    }, [])
+    })
 
     let getPresent = async () => {
         let response = await fetch(backendURL + "/presents/" + presentId + "?apiKey=" + localStorage.getItem("apiKey"))
