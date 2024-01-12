@@ -79,9 +79,7 @@ let App = () => {
       <Content style={{ padding: "20px 50px" }}>
         <Routes>
           <Route path="/" element={
-            <div className='main-container'>
-              <h1>Welcome to Present4U!</h1>
-            </div>
+            <h1>Welcome to Present4U!</h1>
           } />
           <Route path="/createUser" element={
             <CreateUserComponent />
@@ -106,7 +104,7 @@ let App = () => {
           } />
         </Routes>
       </Content>
-      <Footer style={{ textAlign: "center" }}>My website</Footer>
+      <Footer style={{ textAlign: "center" }}>Present4U</Footer>
     </Layout>
   )
 }
