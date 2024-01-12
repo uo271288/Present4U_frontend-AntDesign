@@ -1,5 +1,6 @@
 import { useState, useRef } from "react"
 import { backendURL } from "../Globals"
+import { Button, Card, Col, Input, Row, Alert } from "antd"
 
 let CreatePresentComponent = () => {
 
@@ -14,10 +15,10 @@ let CreatePresentComponent = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                name: name.current.value,
-                description: description.current.value,
-                url: url.current.value,
-                price: price.current.value
+                name: name.current.input.value,
+                description: description.current.input.value,
+                url: url.current.input.value,
+                price: price.current.input.value
             })
         })
         if (!response.ok) {
@@ -31,32 +32,25 @@ let CreatePresentComponent = () => {
             }
         }
 
-        name.current.value = ""
-        description.current.value = ""
-        url.current.value = ""
-        price.current.value = ""
+        name.current.input.value = ""
+        description.current.input.value = ""
+        url.current.input.value = ""
+        price.current.input.value = ""
     }
 
     return (
-        <div className="main-container">
-            <h2>Create a present</h2>
-            {message != null && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            <div className="center-box">
-                <div className='form-group'>
-                    <input ref={name} type='text' placeholder='Name' />
-                </div>
-                <div className='form-group'>
-                    <input ref={description} type='text' placeholder='Description' />
-                </div>
-                <div className='form-group'>
-                    <input ref={url} type='text' placeholder='https://example.com' />
-                </div>
-                <div className='form-group'>
-                    <input ref={price} type='number' step=".01" placeholder='10.0' />
-                </div>
-                <button onClick={clickCreate}>Create present</button>
-            </div>
-        </div>
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                <Card align="middle" title="Create a present" style={{ width: "500px" }}>
+                    <Input ref={name} size="large" type="text" placeholder="Name" />
+                    <Input ref={description} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Description" />
+                    <Input ref={url} size="large" style={{ marginTop: "10px" }} type="text" placeholder="https://example.com" />
+                    <Input ref={price} size="large" style={{ marginTop: "10px" }} type="number" step=".01" placeholder="10.0" />
+                    <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickCreate}>Create present</Button>
+                </Card>
+            </Col>
+        </Row>
     )
 }
 
