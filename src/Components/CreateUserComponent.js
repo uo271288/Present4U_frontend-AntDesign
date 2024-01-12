@@ -42,7 +42,7 @@ let CreateUserComponent = () => {
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
                 {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
-                <Card align="middle" title="Register" style={{ width: "500px" }}>
+                <Card title="Register" style={{ width: "500px" }}>
                     <Input ref={name} size="large" type="text" placeholder="Name" />
                     <Input ref={email} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Your email" />
                     <Input ref={password} size="large" style={{ marginTop: "10px" }} type="password" placeholder="Your password" />
