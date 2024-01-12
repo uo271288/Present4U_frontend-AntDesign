@@ -1,33 +1,24 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useNavigate } from 'react-router-dom'
 import { backendURL } from "../Globals"
+import { Button, Card, Col, Input, Row, Alert } from "antd"
 
 let CreateUserComponent = () => {
 
     let [message, setMessage] = useState([])
-    let [name, setName] = useState("")
-    let [email, setEmail] = useState("")
-    let [password, setPassword] = useState("")
+    let name = useRef("")
+    let email = useRef("")
+    let password = useRef("")
     let navigate = useNavigate()
-
-    let changeName = (e) => {
-        setName(e.currentTarget.value)
-    }
-    let changeEmail = (e) => {
-        setEmail(e.currentTarget.value)
-    }
-    let changePassword = (e) => {
-        setPassword(e.currentTarget.value)
-    }
 
     let clickCreate = async () => {
         let response = await fetch(backendURL + "/users", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                name: name,
-                email: email,
-                password: password
+                name: name.current.input.value,
+                email: email.current.input.value,
+                password: password.current.input.value
             })
         })
         if (response.ok) {
@@ -42,25 +33,23 @@ let CreateUserComponent = () => {
                 setMessage(finalError)
             }
         }
+        name.current.input.value = ""
+        email.current.input.value = ""
+        password.current.input.value = ""
     }
 
     return (
-        <div className="main-container">
-            <h2>Register</h2>
-            {message != null && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            <div className="center-box">
-                <div className='form-group'>
-                    <input type='text' placeholder='Name' onChange={changeName} />
-                </div>
-                <div className='form-group'>
-                    <input type='text' placeholder='Email' onChange={changeEmail} />
-                </div>
-                <div className='form-group'>
-                    <input type='password' placeholder='Password' onChange={changePassword} />
-                </div>
-                <button onClick={clickCreate}>Register</button>
-            </div>
-        </div>
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                <Card align="middle" title="Register" style={{ width: "500px" }}>
+                    <Input ref={name} size="large" type="text" placeholder="Name" />
+                    <Input ref={email} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Your email" />
+                    <Input ref={password} size="large" style={{ marginTop: "10px" }} type="password" placeholder="Your password" />
+                    <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickCreate}>Create account</Button>
+                </Card>
+            </Col>
+        </Row>
     )
 }
 
