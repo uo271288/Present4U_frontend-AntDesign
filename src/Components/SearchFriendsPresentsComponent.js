@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
+import { Card, Col, Row, Alert, Table, Input, Button } from "antd"
 
 let SearchFriendsPresentsComponent = () => {
 
@@ -8,20 +9,10 @@ let SearchFriendsPresentsComponent = () => {
     let [friendEmail, setFriendEmail] = useState("")
     let [message, setMessage] = useState([])
 
-    useEffect(() => {
-        searchPresents()
-    })
-
-    let changeFriendEmail = (e) => {
-        setFriendEmail(e.currentTarget.value)
-        console.log(friendEmail)
-    }
-
     let searchPresents = async () => {
         if (friendEmail !== "") {
             let response = await fetch(backendURL + "/presents?userEmail=" + friendEmail + "&apiKey=" + localStorage.getItem
                 ("apiKey"))
-            console.log(friendEmail)
 
             let jsonData = await response.json()
             if (response.ok) {
@@ -56,42 +47,61 @@ let SearchFriendsPresentsComponent = () => {
         searchPresents()
     }
 
-    return (
-        <div className="main-container" style={{ "max-width": "90%" }}>
-            {presents.length <= 0 &&
-                <div className='friend-form-group'>
-                    <input className="add-friend-input" type='text' placeholder='Email' onChange={changeFriendEmail} />
-                    <button className="add-friend-button" onClick={() => searchPresents()}>Search presents</button>
-                </div>
+    let columns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            render: (name, present) => {
+                return present.chosenBy !== null ? name : <Link onClick={() => selectPresent(present.id)} to="/searchFriendsPresents">{name}</Link>
             }
-            {message != null && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            {presents.length > 0 && <>
-                <h2>{friendEmail}'s presents</h2>
-                {presents.length <= 0 && <h3 className="errorMessage">No presents</h3>}
-                {presents.length > 0 && <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Url</th>
-                        <th>Price</th>
-                        <th>Chosen by</th>
-                    </tr>
-                    {presents.map(present => (
-                        <tr>
-                            {present.chosenBy !== null && <td>{present.name}</td>}
-                            {present.chosenBy === null && <td onClick={() => selectPresent(present.id)}><Link to="/searchFriendsPresents">{present.name}</Link></td>}
-                            <td>{present.description}</td>
-                            <td><a href={present.url}>{present.url}</a></td>
-                            <td>{present.price}€</td>
-                            {present.chosenBy === null && <td>-</td>}
-                            {present.chosenBy !== null && <td>{present.chosenBy}</td>}
-                        </tr>
-                    ))
-                    }
-                </table>
+        },
+        {
+            title: "Description",
+            dataIndex: "description"
+        },
+        {
+            title: "Url",
+            dataIndex: "url",
+            render: (url) => { return <Link to={url}>{url}</Link> }
+        },
+        {
+            title: "Price",
+            dataIndex: "price",
+            render: (price) => { return price + "€" }
+        },
+        {
+            title: "Chosen by",
+            dataIndex: "chosenBy",
+            render: (chosenBy) => {
+                return chosenBy === null ? "-" : chosenBy
+            }
+        }
+    ]
+
+    return (
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {presents.length <= 0 &&
+                    <Card align="middle" title="Search your friend's presents" style={{ width: "500px" }}>
+                        <Input size="large" type="text" placeholder="Email" onChange={
+                            (e) => {
+                                setFriendEmail(e.target.value)
+                                setMessage([])
+                            }} />
+                        <Button type="primary" style={{ marginTop: "10px" }} block onClick={searchPresents}>Search presents</Button>
+                    </Card>
                 }
-            </>}
-        </div>
+
+                {presents.length > 0 &&
+                    <Card align="middle" title={friendEmail + "'s presents"} style={{ width: "100%" }}>
+                        {presents.length <= 0 && <Alert type="error" message="No presents" />}
+                        <Button type="primary" style={{ marginTop: "10px", float: "right" }} onClick={() => { setPresents([]) }}>Go back</Button>
+                        <Table columns={columns} dataSource={presents}></Table>
+                    </Card>
+                }
+            </Col>
+        </Row>
     )
 }
 
