@@ -1,45 +1,57 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { backendURL } from "../Globals"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
+import { Alert, Button, Card, Col, Input, Row } from "antd"
 
 let ModifyPresentComponent = () => {
 
-    let [present, setPresent] = useState({})
+    let nameInput = useRef("")
+    let descriptionInput = useRef("")
+    let urlInput = useRef("")
+    let priceInput = useRef(0.0)
+    let [nameValue, setNameValue] = useState("")
+    let [descriptionValue, setDescriptionValue] = useState("")
+    let [urlValue, setUrlValue] = useState("")
+    let [priceValue, setPriceValue] = useState(0.0)
     let [message, setMessage] = useState([])
     let { presentId } = useParams()
+    let navigate = useNavigate()
 
     useEffect(() => {
-        getPresent()
-    })
+        let getPresent = async () => {
+            let response = await fetch(backendURL + "/presents/" + presentId + "?apiKey=" + localStorage.getItem("apiKey"))
 
-    let getPresent = async () => {
-        let response = await fetch(backendURL + "/presents/" + presentId + "?apiKey=" + localStorage.getItem("apiKey"))
-
-
-        let jsonData = await response.json()
-        if (response.ok) {
-            setPresent(jsonData)
-        } else {
-            if (Array.isArray(jsonData.error)) {
-                setMessage(jsonData.error)
-            } else {
-                let finalError = []
-                finalError.push(jsonData.error)
-                setMessage(finalError)
+            let jsonData = await response.json()
+            if (response.ok) {
+                setNameValue(jsonData.name)
+                setDescriptionValue(jsonData.description)
+                setUrlValue(jsonData.url)
+                setPriceValue(jsonData.price)
+            }
+            else {
+                if (Array.isArray(jsonData.error)) {
+                    setMessage(jsonData.error)
+                } else {
+                    let finalError = []
+                    finalError.push(jsonData.error)
+                    setMessage(finalError)
+                }
             }
         }
-    }
 
-    let changeProperty = (name, value) => {
-        let newPresentValues = { ...present, [name]: value }
-        setPresent(newPresentValues)
-    }
+        getPresent()
+    }, [presentId])
 
     let clickEdit = async () => {
         let response = await fetch(backendURL + "/presents/" + presentId + "?apiKey=" + localStorage.getItem("apiKey"), {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...present })
+            body: JSON.stringify({
+                name: nameValue,
+                description: descriptionValue,
+                url: urlValue,
+                price: priceValue
+            })
         })
         if (response.ok) {
 
@@ -53,30 +65,25 @@ let ModifyPresentComponent = () => {
                 setMessage(finalError)
             }
         }
+
+        navigate("/listPresents")
     }
 
     return (
-        <div className="main-container">
-            <h2>Edit a present</h2>
-            {message.length > 0 && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            {message.length <= 0 &&
-                <div className="center-box">
-                    <div className='form-group'>
-                        <input type='text' placeholder='Name' onChange={(e) => changeProperty("name", e.currentTarget.value)} value={present.name} />
-                    </div>
-                    <div className='form-group'>
-                        <input type='text' placeholder='Description' onChange={(e) => changeProperty("description", e.currentTarget.value)} value={present.description} />
-                    </div>
-                    <div className='form-group'>
-                        <input type='text' placeholder='https://example.com' onChange={(e) => changeProperty("url", e.currentTarget.value)} value={present.url} />
-                    </div>
-                    <div className='form-group'>
-                        <input type='number' step=".01" placeholder='10.0' onChange={(e) => changeProperty("price", e.currentTarget.value)} value={present.price} />
-                    </div>
-                    <button onClick={clickEdit}>Edit present</button>
-                </div>
-            }
-        </div>
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {message.length <= 0 &&
+                    <Card title="Edit present" style={{ width: "500px" }}>
+                        <Input ref={nameInput} size="large" type="text" placeholder="Name" value={nameValue} onChange={(e) => setNameValue(e.target.value)} />
+                        <Input ref={descriptionInput} style={{ marginTop: "10px" }} size="large" type="text" placeholder="Description" value={descriptionValue} onChange={(e) => setDescriptionValue(e.target.value)} />
+                        <Input ref={urlInput} style={{ marginTop: "10px" }} size="large" type="text" placeholder="https://example.com" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} />
+                        <Input ref={priceInput} style={{ marginTop: "10px" }} size="large" type="number" step={0.01} placeholder="10.0" value={priceValue} onChange={(e) => setPriceValue(e.target.value)} />
+                        <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickEdit}>Edit present</Button>
+                    </Card>
+                }
+            </Col>
+        </Row>
     )
 }
 
