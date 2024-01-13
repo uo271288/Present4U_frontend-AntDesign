@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
+import { Card, Col, Row, Alert, Table } from "antd"
 
 let ListPresentsComponent = () => {
 
@@ -36,37 +37,59 @@ let ListPresentsComponent = () => {
         getPresents()
     }
 
-    return (
-        <div className="main-container" style={{ "max-width": "90%" }}>
-            <h2>My presents</h2>
-            {presents.length <= 0 && <h3 className="errorMessage">No presents</h3>}
-            {message != null && message.map(e => { return <p className="errorMessage">{e}</p> })}
-            {presents.length > 0 && <table>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Url</th>
-                    <th>Price</th>
-                    <th>Chosen by</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                {presents.map(present => (
-                    <tr>
-                        <td>{present.name}</td>
-                        <td>{present.description}</td>
-                        <td><a href={present.url}>{present.url}</a></td>
-                        <td>{present.price}€</td>
-                        {present.chosenBy === null && <td>-</td>}
-                        {present.chosenBy !== null && <td>{present.chosenBy}</td>}
-                        <td><Link to="/listPresents"><img alt="delete" onClick={() => deletePresent(present.id)} src="redCross.png" /></Link></td>
-                        <td><Link to={"/modifyPresent/" + present.id}><img alt="modify" src="greenPencil.png" /></Link></td>
-                    </tr>
-                ))
-                }
-            </table>
+    let columns = [
+        {
+            title: "Name",
+            dataIndex: "name"
+        },
+        {
+            title: "Description",
+            dataIndex: "description"
+        },
+        {
+            title: "Url",
+            dataIndex: "url",
+            render: (url) => { return <Link to={url}>{url}</Link> }
+        },
+        {
+            title: "Price",
+            dataIndex: "price",
+            render: (price) => { return price + "€" }
+        },
+        {
+            title: "Chosen by",
+            dataIndex: "chosenBy",
+            render: (chosenBy) => {
+                return chosenBy === null ? "-" : chosenBy
             }
-        </div>
+        },
+        {
+            title: "",
+            dataIndex: "id",
+            render: (id) => {
+                return <Link to="/listPresents"><img alt="delete" onClick={() => deletePresent(id)} src="redCross.png" /></Link>
+            }
+        },
+        {
+            title: "",
+            dataIndex: "id",
+            render: (id) => {
+                return <Link to={"/modifyPresent/" + id}><img alt="modify" src="greenPencil.png" /></Link>
+            }
+        }
+
+    ]
+
+    return (
+        <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
+            <Col>
+                <Card title="My presents" style={{ width: "100%" }}>
+                    {presents.length <= 0 && <h3 className="errorMessage">No presents</h3>}
+                    {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                    {presents.length > 0 && <Table columns={columns} dataSource={presents}></Table>}
+                </Card>
+            </Col>
+        </Row>
     )
 }
 
