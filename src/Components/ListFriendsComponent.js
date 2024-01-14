@@ -3,8 +3,9 @@ import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
 import { Card, Col, Row, Alert, List, Input, Button, Divider } from "antd"
 
-let ListFriendsComponent = () => {
+let ListFriendsComponent = (props) => {
 
+    let { createNotification } = props
     let [friends, setFriends] = useState([])
     let [emailValue, setEmailValue] = useState("")
     let emailInput = useRef("")
@@ -27,8 +28,7 @@ let ListFriendsComponent = () => {
         await fetch(backendURL + "/friends/" + id + "?apiKey=" + localStorage.getItem("apiKey"), {
             method: "DELETE"
         })
-
-        getFriends()
+        createNotification("Friend deleted successfully")
     }
 
     let addFriend = async () => {
@@ -39,7 +39,9 @@ let ListFriendsComponent = () => {
                 email: emailValue
             })
         })
-        if (!response.ok) {
+        if (response.ok) {
+            createNotification("Friend added successfully")
+        } else {
             let jsonData = await response.json()
             if (Array.isArray(jsonData.error)) {
                 setMessage(jsonData.error)
@@ -58,19 +60,22 @@ let ListFriendsComponent = () => {
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
                 <Card title="My friends" style={{ width: "500px" }}>
-                    {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                    {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
                     {friends.length <= 0 && <h3 className="errorMessage">No friends</h3>}
                     {friends.length > 0 && <List
                         bordered
                         dataSource={friends}
                         renderItem={(friend) => (
                             <List.Item>
-                                {friend.emailFriend} <Link to="/listFriends"><img style={{ float: "right" }} alt="delete" onClick={() => deleteFriend(friend.emailFriend)} src="redCross.png" /></Link>
+                                {friend.emailFriend} <Link to="/myFriends"><img style={{ float: "right" }} alt="delete" onClick={() => deleteFriend(friend.emailFriend)} src="redCross.png" /></Link>
                             </List.Item>
                         )}
                     />}
                     <Divider orientation="left">Add a new friend</Divider>
-                    <Input ref={emailInput} size="large" type="text" style={{ marginTop: "10px" }} placeholder="Your frind's email" value={emailValue} onChange={(e) => setEmailValue(e.target.value)} />
+                    <Input ref={emailInput} size="large" type="text" style={{ marginTop: "10px" }} placeholder="Your frind's email" value={emailValue} onChange={(e) => {
+                        setEmailValue(e.target.value)
+                        setMessage([])
+                    }} />
                     <Button type="primary" style={{ marginTop: "10px" }} block onClick={addFriend}>Add friend</Button>
                 </Card>
             </Col>

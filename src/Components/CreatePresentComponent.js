@@ -2,8 +2,9 @@ import { useState, useRef } from "react"
 import { backendURL } from "../Globals"
 import { Button, Card, Col, Input, Row, Alert } from "antd"
 
-let CreatePresentComponent = () => {
+let CreatePresentComponent = (props) => {
 
+    let { createNotification } = props
     let [message, setMessage] = useState([])
     let name = useRef("")
     let description = useRef("")
@@ -21,7 +22,9 @@ let CreatePresentComponent = () => {
                 price: price.current.input.value
             })
         })
-        if (!response.ok) {
+        if (response.ok) {
+            createNotification("Present created successfully")
+        } else {
             let jsonData = await response.json()
             if (Array.isArray(jsonData.error)) {
                 setMessage(jsonData.error)
@@ -41,7 +44,7 @@ let CreatePresentComponent = () => {
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
-                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
                 <Card align="middle" title="Create a present" style={{ width: "500px" }}>
                     <Input ref={name} size="large" type="text" placeholder="Name" />
                     <Input ref={description} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Description" />

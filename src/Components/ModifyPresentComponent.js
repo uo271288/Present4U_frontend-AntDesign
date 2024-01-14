@@ -3,8 +3,9 @@ import { backendURL } from "../Globals"
 import { useParams, useNavigate } from "react-router-dom"
 import { Alert, Button, Card, Col, Input, Row } from "antd"
 
-let ModifyPresentComponent = () => {
+let ModifyPresentComponent = (props) => {
 
+    let { createNotification } = props
     let nameInput = useRef("")
     let descriptionInput = useRef("")
     let urlInput = useRef("")
@@ -54,7 +55,7 @@ let ModifyPresentComponent = () => {
             })
         })
         if (response.ok) {
-
+            createNotification("Present modified successfully")
         } else {
             let jsonData = await response.json()
             if (Array.isArray(jsonData)) {
@@ -66,7 +67,7 @@ let ModifyPresentComponent = () => {
             }
         }
 
-        navigate("/listPresents")
+        navigate("/myPresents")
     }
 
     return (

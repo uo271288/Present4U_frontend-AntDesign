@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { backendURL } from "../Globals"
 import { Button, Card, Col, Input, Row, Alert } from "antd"
 
-let CreateUserComponent = () => {
+let CreateUserComponent = (props) => {
 
+    let { createNotification } = props
     let [message, setMessage] = useState([])
     let name = useRef("")
     let email = useRef("")
@@ -22,6 +23,7 @@ let CreateUserComponent = () => {
             })
         })
         if (response.ok) {
+            createNotification("User created successfully")
             navigate("/login")
         } else {
             let jsonData = await response.json()
@@ -41,7 +43,7 @@ let CreateUserComponent = () => {
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
-                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
                 <Card title="Register" style={{ width: "500px" }}>
                     <Input ref={name} size="large" type="text" placeholder="Name" />
                     <Input ref={email} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Your email" />

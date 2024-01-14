@@ -3,8 +3,9 @@ import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
 import { Card, Col, Row, Alert, Table } from "antd"
 
-let ListPresentsComponent = () => {
+let ListPresentsComponent = (props) => {
 
+    let { createNotification } = props
     let [presents, setPresents] = useState([])
     let [message, setMessage] = useState([])
 
@@ -33,8 +34,7 @@ let ListPresentsComponent = () => {
         await fetch(backendURL + "/presents/" + id + "?apiKey=" + localStorage.getItem("apiKey"), {
             method: "DELETE"
         })
-
-        getPresents()
+        createNotification("Present deleted successfully")
     }
 
     let columns = [
@@ -67,7 +67,7 @@ let ListPresentsComponent = () => {
             title: "",
             dataIndex: "id",
             render: (id) => {
-                return <Link to="/listPresents"><img alt="delete" onClick={() => deletePresent(id)} src="redCross.png" /></Link>
+                return <Link to="/myPresents"><img alt="delete" onClick={() => deletePresent(id)} src="redCross.png" /></Link>
             }
         },
         {

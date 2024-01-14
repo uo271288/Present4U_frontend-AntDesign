@@ -3,8 +3,9 @@ import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
 import { Card, Col, Row, Alert, Table, Input, Button } from "antd"
 
-let SearchFriendsPresentsComponent = () => {
+let SearchFriendsPresentsComponent = (props) => {
 
+    let { createNotification } = props
     let [presents, setPresents] = useState([])
     let [friendEmail, setFriendEmail] = useState("")
     let [message, setMessage] = useState([])
@@ -33,7 +34,9 @@ let SearchFriendsPresentsComponent = () => {
         let response = await fetch(backendURL + "/presents/" + id + "?apiKey=" + localStorage.getItem("apiKey"), {
             method: "PUT"
         })
-        if (!response.ok) {
+        if (response.ok) {
+            createNotification("Present selected successfully")
+        } else {
             let jsonData = await response.json()
             if (Array.isArray(jsonData)) {
                 setMessage(jsonData)
@@ -81,7 +84,7 @@ let SearchFriendsPresentsComponent = () => {
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
-                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
                 {presents.length <= 0 &&
                     <Card align="middle" title="Search your friend's presents" style={{ width: "500px" }}>
                         <Input size="large" type="text" placeholder="Email" onChange={
@@ -92,10 +95,9 @@ let SearchFriendsPresentsComponent = () => {
                         <Button type="primary" style={{ marginTop: "10px" }} block onClick={searchPresents}>Search presents</Button>
                     </Card>
                 }
-
                 {presents.length > 0 &&
                     <Card align="middle" title={friendEmail + "'s presents"} style={{ width: "100%" }}>
-                        {presents.length <= 0 && <Alert type="error" message="No presents" />}
+                        {presents.length <= 0 && <Alert type="error" message="No presents" showIcon />}
                         <Button type="primary" style={{ marginTop: "10px", float: "right" }} onClick={() => { setPresents([]) }}>Go back</Button>
                         <Table columns={columns} dataSource={presents}></Table>
                     </Card>

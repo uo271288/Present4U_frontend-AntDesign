@@ -27,7 +27,7 @@ let LoginComponent = (props) => {
                 localStorage.setItem("idUser", jsonData.id)
                 localStorage.setItem("email", jsonData.email)
                 setLogin(true)
-                navigate("/")
+                navigate("/home")
             }
         } else {
             if (Array.isArray(jsonData.error)) {
@@ -45,7 +45,7 @@ let LoginComponent = (props) => {
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
-                {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
+                {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
                 <Card title="Login" style={{ width: "500px" }}>
                     <Input ref={email} size="large" type="text" placeholder="Your email" />
                     <Input ref={password} size="large" style={{ marginTop: "10px" }} type="password" placeholder="Your password" />
