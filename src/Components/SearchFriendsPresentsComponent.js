@@ -1,14 +1,32 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
-import { Card, Col, Row, Alert, Table, Input, Button } from "antd"
+import { Card, Col, Row, Alert, Table, Input, Button, Typography } from "antd"
 
 let SearchFriendsPresentsComponent = (props) => {
 
     let { createNotification } = props
+    let [error, setError] = useState({})
     let [presents, setPresents] = useState([])
     let [friendEmail, setFriendEmail] = useState("")
     let [message, setMessage] = useState([])
+
+    useEffect(() => {
+        let checkInputErrors = () => {
+            let updatedErrors = {}
+            if (friendEmail === null || friendEmail?.trim() === '') {
+                updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
+                updatedErrors.email.push("Email cannot be null or empty")
+            }
+            if (friendEmail?.length < 3 || (friendEmail != null && !(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(friendEmail)))) {
+                updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
+                updatedErrors.email.push("Incorrect email format")
+            }
+            setError(updatedErrors)
+        }
+
+        checkInputErrors()
+    }, [friendEmail])
 
     let searchPresents = async () => {
         if (friendEmail !== "") {
@@ -81,6 +99,7 @@ let SearchFriendsPresentsComponent = (props) => {
         }
     ]
 
+    let { Text } = Typography
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
@@ -92,6 +111,7 @@ let SearchFriendsPresentsComponent = (props) => {
                                 setFriendEmail(e.target.value)
                                 setMessage([])
                             }} />
+                        {error.email && error.email.map(e => { return <Text type="danger">{e}<br /></Text> })}
                         <Button type="primary" style={{ marginTop: "10px" }} block onClick={searchPresents}>Search presents</Button>
                     </Card>
                 }

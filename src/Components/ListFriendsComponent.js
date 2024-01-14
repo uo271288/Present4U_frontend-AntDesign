@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react"
 import { backendURL } from "../Globals"
 import { Link } from 'react-router-dom'
-import { Card, Col, Row, Alert, List, Input, Button, Divider } from "antd"
+import { Card, Col, Row, Alert, List, Input, Button, Divider, Typography } from "antd"
 
 let ListFriendsComponent = (props) => {
 
     let { createNotification } = props
+    let [error, setError] = useState({})
     let [friends, setFriends] = useState([])
     let [emailValue, setEmailValue] = useState("")
     let emailInput = useRef("")
@@ -14,6 +15,23 @@ let ListFriendsComponent = (props) => {
     useEffect(() => {
         getFriends()
     })
+
+    useEffect(() => {
+        let checkInputErrors = () => {
+            let updatedErrors = {}
+            if (emailValue === null || emailValue?.trim() === '') {
+                updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
+                updatedErrors.email.push("Email cannot be null or empty")
+            }
+            if (emailValue?.length < 3 || (emailValue != null && !(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(emailValue)))) {
+                updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
+                updatedErrors.email.push("Incorrect email format")
+            }
+            setError(updatedErrors)
+        }
+
+        checkInputErrors()
+    }, [emailValue])
 
     let getFriends = async () => {
         let response = await fetch(backendURL + "/friends?apiKey=" + localStorage.getItem("apiKey"))
@@ -56,6 +74,7 @@ let ListFriendsComponent = (props) => {
         setEmailValue("")
     }
 
+    let { Text } = Typography
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
@@ -76,6 +95,7 @@ let ListFriendsComponent = (props) => {
                         setEmailValue(e.target.value)
                         setMessage([])
                     }} />
+                    {error.email && error.email.map(e => { return <Text type="danger">{e}<br /></Text> })}
                     <Button type="primary" style={{ marginTop: "10px" }} block onClick={addFriend}>Add friend</Button>
                 </Card>
             </Col>
