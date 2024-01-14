@@ -40,7 +40,8 @@ let ListPresentsComponent = (props) => {
     let columns = [
         {
             title: "Name",
-            dataIndex: "name"
+            dataIndex: "name",
+            render: (name, present) => { return <Link to={"/presentDetails/" + present.id}>{name}</Link> }
         },
         {
             title: "Description",

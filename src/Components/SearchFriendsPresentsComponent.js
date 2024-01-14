@@ -118,7 +118,7 @@ let SearchFriendsPresentsComponent = (props) => {
                 {presents.length > 0 &&
                     <Card align="middle" title={friendEmail + "'s presents"} style={{ width: "100%" }}>
                         {presents.length <= 0 && <Alert type="error" message="No presents" showIcon />}
-                        <Button type="primary" style={{ marginTop: "10px", float: "right" }} onClick={() => { setPresents([]) }}>Go back</Button>
+                        <Button type="primary" style={{ marginBottom: "10px", float: "right" }} onClick={() => { setPresents([]) }}>Go back</Button>
                         <Table columns={columns} dataSource={presents}></Table>
                     </Card>
                 }

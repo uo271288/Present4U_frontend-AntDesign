@@ -4,6 +4,7 @@ import { Layout, Menu, Typography, notification } from "antd";
 import CreateUserComponent from './Components/CreateUserComponent'
 import CreatePresentComponent from './Components/CreatePresentComponent'
 import ListPresentsComponent from './Components/ListPresentsComponent'
+import PresentDetailsComponent from './Components/PresentDetailsComponent'
 import ModifyPresentComponent from './Components/ModifyPresentComponent'
 import ListFriendsComponent from './Components/ListFriendsComponent'
 import SearchFriendsPresentsComponent from './Components/SearchFriendsPresentsComponent'
@@ -111,6 +112,9 @@ let App = () => {
             } />
             <Route path="/searchFriendsPresents" element={
               <SearchFriendsPresentsComponent createNotification={createNotification} />
+            } />
+            <Route path="/presentDetails/:presentId" element={
+              <PresentDetailsComponent />
             } />
           </Routes>
         </Content>
