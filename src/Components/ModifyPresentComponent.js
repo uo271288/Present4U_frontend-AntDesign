@@ -68,9 +68,9 @@ let ModifyPresentComponent = (props) => {
                 updatedErrors.price = updatedErrors.price === undefined ? [] : [...updatedErrors.price]
                 updatedErrors.price.push("Price cannot be null or empty")
             }
-            if (parseFloat(priceValue) < 0) {
+            if (parseFloat(priceValue) <= 0) {
                 updatedErrors.price = updatedErrors.price === undefined ? [] : [...updatedErrors.price]
-                updatedErrors.price.push("Price cannot be negative")
+                updatedErrors.price.push("Price cannot be negative or zero")
             }
             setError(updatedErrors)
         }
