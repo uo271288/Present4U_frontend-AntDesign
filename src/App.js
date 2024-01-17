@@ -11,6 +11,7 @@ import SearchFriendsPresentsComponent from './Components/SearchFriendsPresentsCo
 import CreateListComponent from './Components/CreateListComponent'
 import LoginComponent from './Components/LoginComponent'
 import ListListsComponent from './Components/ListListsComponent'
+import ListPresentsChosenByMeComponent from './Components/ListPresentsChosenByMeComponent'
 import { backendURL } from "./Globals"
 
 let App = () => {
@@ -86,6 +87,7 @@ let App = () => {
               { key: "menuListFriends", label: <Link to="/myFriends">My friends</Link> },
               { key: "menuListLists", label: <Link to="/myLists">My lists</Link> },
               { key: "menuSearchFriendsPresents", label: <Link to="/searchFriendsPresents">Search friend's presents</Link> },
+              { key: "menuPresentsChosenByMe", label: <Link to="/presentsChosenByMe">Presents chosen</Link> },
               { key: "menuDisconnect", label: <Link to="/disconnect" onClick={disconnect}>Disconnect</Link> }
             ]} />
           }
@@ -125,6 +127,9 @@ let App = () => {
             } />
             <Route path="/myLists" element={
               <ListListsComponent />
+            } />
+            <Route path="/presentsChosenByMe" element={
+              <ListPresentsChosenByMeComponent />
             } />
           </Routes>
         </Content>
