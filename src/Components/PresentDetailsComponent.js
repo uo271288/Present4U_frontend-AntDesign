@@ -35,21 +35,26 @@ let ListPresentsComponent = () => {
         {
             key: '1',
             label: 'Name',
-            span: 2,
             children: present.name
         },
         {
             key: '2',
+            label: 'List name',
+            children: present.listName
+        },
+        {
+            key: '3',
             label: 'Price',
             children: present.price + '€'
         },
         {
-            key: '3',
+            key: '4',
             label: 'Url',
+            span: 4,
             children: <Link to={present.url}>{present.url}</Link>
         },
         {
-            key: '4',
+            key: '5',
             label: 'Desciption',
             span: 4,
             children: present.description

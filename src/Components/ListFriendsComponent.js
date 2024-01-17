@@ -10,6 +10,8 @@ let ListFriendsComponent = (props) => {
     let [friends, setFriends] = useState([])
     let [emailValue, setEmailValue] = useState("")
     let emailInput = useRef("")
+    let [listNameValue, setListNameValue] = useState("")
+    let listNameInput = useRef("")
     let [message, setMessage] = useState([])
 
     useEffect(() => {
@@ -27,11 +29,15 @@ let ListFriendsComponent = (props) => {
                 updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
                 updatedErrors.email.push("Incorrect email format")
             }
+            if (listNameValue === null || listNameValue?.trim() === '') {
+                updatedErrors.listName = updatedErrors.listName === undefined ? [] : [...updatedErrors.listName]
+                updatedErrors.listName.push("List name cannot be null or empty")
+            }
             setError(updatedErrors)
         }
 
         checkInputErrors()
-    }, [emailValue])
+    }, [emailValue, listNameValue])
 
     let getFriends = async () => {
         let response = await fetch(backendURL + "/friends?apiKey=" + localStorage.getItem("apiKey"))
@@ -42,19 +48,39 @@ let ListFriendsComponent = (props) => {
         }
     }
 
-    let deleteFriend = async (id) => {
-        await fetch(backendURL + "/friends/" + id + "?apiKey=" + localStorage.getItem("apiKey"), {
+    let deleteFriend = async (emailFriend, listId) => {
+        let response = await fetch(backendURL + "/friends/" + emailFriend + "/" + listId + "?apiKey=" + localStorage.getItem("apiKey"), {
             method: "DELETE"
         })
-        createNotification("Friend deleted successfully")
+        if (response.ok) {
+            createNotification("Friend deleted successfully")
+        }
     }
 
     let addFriend = async () => {
+
+        let listResponse = await fetch(backendURL + "/lists/name/" + listNameValue + "?apiKey=" + localStorage.getItem("apiKey"))
+        let listId
+        if (listResponse.ok) {
+            let jsonData = await listResponse.json()
+            listId = jsonData.id
+        } else {
+            let jsonData = await listResponse.json()
+            if (Array.isArray(jsonData.error)) {
+                setMessage(jsonData.error)
+            } else {
+                let finalError = []
+                finalError.push(jsonData.error)
+                setMessage(finalError)
+            }
+        }
+
         let response = await fetch(backendURL + "/friends?apiKey=" + localStorage.getItem("apiKey"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                email: emailValue
+                email: emailValue,
+                idList: listId
             })
         })
         if (response.ok) {
@@ -72,6 +98,7 @@ let ListFriendsComponent = (props) => {
 
         getFriends()
         setEmailValue("")
+        setListNameValue("")
     }
 
     let { Text } = Typography
@@ -86,7 +113,11 @@ let ListFriendsComponent = (props) => {
                         dataSource={friends}
                         renderItem={(friend) => (
                             <List.Item>
-                                {friend.emailFriend} <Link to="/myFriends"><img style={{ float: "right" }} alt="delete" onClick={() => deleteFriend(friend.emailFriend)} src="redCross.png" /></Link>
+                                <List.Item.Meta
+                                    title={friend.listName}
+                                    description={friend.emailFriend}
+                                />
+                                <Link to="/myFriends"><img style={{ float: "right" }} alt="delete" onClick={() => deleteFriend(friend.emailFriend, friend.listId)} src="redCross.png" /></Link>
                             </List.Item>
                         )}
                     />}
@@ -96,6 +127,11 @@ let ListFriendsComponent = (props) => {
                         setMessage([])
                     }} />
                     {error.email && error.email.map(e => { return <Text type="danger">{e}<br /></Text> })}
+                    <Input ref={listNameInput} size="large" type="text" style={{ marginTop: "10px" }} placeholder="Wishlist" value={listNameValue} onChange={(e) => {
+                        setListNameValue(e.target.value)
+                        setMessage([])
+                    }} />
+                    {error.listName && error.listName.map(e => { return <Text type="danger">{e}<br /></Text> })}
                     <Button type="primary" style={{ marginTop: "10px" }} block onClick={addFriend}>Add friend</Button>
                 </Card>
             </Col>

@@ -11,10 +11,12 @@ let CreatePresentComponent = (props) => {
     let descriptionInput = useRef("")
     let urlInput = useRef("")
     let priceInput = useRef(0.0)
+    let listNameInput = useRef("")
     let [nameValue, setNameValue] = useState("")
     let [descriptionValue, setDescriptionValue] = useState("")
     let [urlValue, setUrlValue] = useState("")
     let [priceValue, setPriceValue] = useState(0.0)
+    let [listNameValue, setListNameValue] = useState("")
 
     useEffect(() => {
         let checkInputErrors = () => {
@@ -44,14 +46,35 @@ let CreatePresentComponent = (props) => {
                 updatedErrors.price = updatedErrors.price === undefined ? [] : [...updatedErrors.price]
                 updatedErrors.price.push("Price cannot be negative or zero")
             }
+            if (listNameValue === null || (listNameValue + '')?.trim() === '') {
+                updatedErrors.listName = updatedErrors.listName === undefined ? [] : [...updatedErrors.listName]
+                updatedErrors.listName.push("List name cannot be null or empty")
+            }
             setError(updatedErrors)
         }
 
         checkInputErrors()
-    }, [error, descriptionValue, nameValue, priceValue, urlValue])
+    }, [error, descriptionValue, nameValue, priceValue, urlValue, listNameValue])
 
 
     let clickCreate = async () => {
+
+        let listResponse = await fetch(backendURL + "/lists/name/" + listNameValue + "?apiKey=" + localStorage.getItem("apiKey"))
+        let listId
+        if (listResponse.ok) {
+            let jsonData = await listResponse.json()
+            listId = jsonData.id
+        } else {
+            let jsonData = await listResponse.json()
+            if (Array.isArray(jsonData.error)) {
+                setMessage(jsonData.error)
+            } else {
+                let finalError = []
+                finalError.push(jsonData.error)
+                setMessage(finalError)
+            }
+        }
+
         let response = await fetch(backendURL + "/presents?apiKey=" + localStorage.getItem("apiKey"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -59,7 +82,8 @@ let CreatePresentComponent = (props) => {
                 name: nameValue,
                 description: descriptionValue,
                 url: urlValue,
-                price: priceValue
+                price: priceValue,
+                listId: listId
             })
         })
         if (response.ok) {
@@ -79,6 +103,7 @@ let CreatePresentComponent = (props) => {
         setDescriptionValue("")
         setUrlValue("")
         setPriceValue(0.0)
+        setListNameValue("")
     }
 
     let { Text } = Typography
@@ -95,6 +120,8 @@ let CreatePresentComponent = (props) => {
                     {error.url && error.url.map(e => { return <Text type="danger">{e}<br /></Text> })}
                     <Input ref={priceInput} size="large" style={{ marginTop: "10px" }} type="number" step=".01" placeholder="10.0" onChange={(e) => setPriceValue(e.target.value)} value={priceValue} />
                     {error.price && error.price.map(e => { return <Text type="danger">{e}<br /></Text> })}
+                    <Input ref={listNameInput} size="large" style={{ marginTop: "10px" }} type="text" placeholder="Wishlist" onChange={(e) => setListNameValue(e.target.value)} value={listNameValue} />
+                    {error.listName && error.listName.map(e => { return <Text type="danger">{e}<br /></Text> })}
                     <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickCreate}>Create present</Button>
                 </Card>
             </Col>

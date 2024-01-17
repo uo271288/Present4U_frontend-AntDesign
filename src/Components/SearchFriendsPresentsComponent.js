@@ -9,6 +9,7 @@ let SearchFriendsPresentsComponent = (props) => {
     let [error, setError] = useState({})
     let [presents, setPresents] = useState([])
     let [friendEmail, setFriendEmail] = useState("")
+    let [listName, setListName] = useState("")
     let [message, setMessage] = useState([])
 
     useEffect(() => {
@@ -22,15 +23,19 @@ let SearchFriendsPresentsComponent = (props) => {
                 updatedErrors.email = updatedErrors.email === undefined ? [] : [...updatedErrors.email]
                 updatedErrors.email.push("Incorrect email format")
             }
+            if (listName === null || listName?.trim() === '') {
+                updatedErrors.listName = updatedErrors.listName === undefined ? [] : [...updatedErrors.listName]
+                updatedErrors.listName.push("List name cannot be null or empty")
+            }
             setError(updatedErrors)
         }
 
         checkInputErrors()
-    }, [friendEmail])
+    }, [friendEmail, listName])
 
     let searchPresents = async () => {
         if (friendEmail !== "") {
-            let response = await fetch(backendURL + "/presents?userEmail=" + friendEmail + "&apiKey=" + localStorage.getItem
+            let response = await fetch(backendURL + "/presents?listName=" + listName + "&userEmail=" + friendEmail + "&apiKey=" + localStorage.getItem
                 ("apiKey"))
 
             let jsonData = await response.json()
@@ -77,6 +82,10 @@ let SearchFriendsPresentsComponent = (props) => {
             }
         },
         {
+            title: "List name",
+            dataIndex: "listName"
+        },
+        {
             title: "Description",
             dataIndex: "description"
         },
@@ -112,6 +121,12 @@ let SearchFriendsPresentsComponent = (props) => {
                                 setMessage([])
                             }} />
                         {error.email && error.email.map(e => { return <Text type="danger">{e}<br /></Text> })}
+                        <Input size="large" type="text" placeholder="Wishlist" onChange={
+                            (e) => {
+                                setListName(e.target.value)
+                                setMessage([])
+                            }} />
+                        {error.listName && error.listName.map(e => { return <Text type="danger">{e}<br /></Text> })}
                         <Button type="primary" style={{ marginTop: "10px" }} block onClick={searchPresents}>Search presents</Button>
                     </Card>
                 }

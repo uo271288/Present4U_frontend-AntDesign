@@ -44,6 +44,10 @@ let ListPresentsComponent = (props) => {
             render: (name, present) => { return <Link to={"/presentDetails/" + present.id}>{name}</Link> }
         },
         {
+            title: "List name",
+            dataIndex: "listName"
+        },
+        {
             title: "Description",
             dataIndex: "description"
         },
