@@ -8,7 +8,9 @@ import PresentDetailsComponent from './Components/PresentDetailsComponent'
 import ModifyPresentComponent from './Components/ModifyPresentComponent'
 import ListFriendsComponent from './Components/ListFriendsComponent'
 import SearchFriendsPresentsComponent from './Components/SearchFriendsPresentsComponent'
+import CreateListComponent from './Components/CreateListComponent'
 import LoginComponent from './Components/LoginComponent'
+import ListListsComponent from './Components/ListListsComponent'
 import { backendURL } from "./Globals"
 
 let App = () => {
@@ -79,8 +81,10 @@ let App = () => {
             <Menu theme="dark" mode="horizontal" items={[
               { key: "menuHome", label: <Link to="/home">Home</Link> },
               { key: "menuCreatePresent", label: <Link to="/createPresent">Create present</Link> },
+              { key: "menuCreateList", label: <Link to="/createList">Create List</Link> },
               { key: "menuListPresents", label: <Link to="/myPresents">My presents</Link> },
               { key: "menuListFriends", label: <Link to="/myFriends">My friends</Link> },
+              { key: "menuListLists", label: <Link to="/myLists">My lists</Link> },
               { key: "menuSearchFriendsPresents", label: <Link to="/searchFriendsPresents">Search friend's presents</Link> },
               { key: "menuDisconnect", label: <Link to="/disconnect" onClick={disconnect}>Disconnect</Link> }
             ]} />
@@ -115,6 +119,12 @@ let App = () => {
             } />
             <Route path="/presentDetails/:presentId" element={
               <PresentDetailsComponent />
+            } />
+            <Route path="/createList" element={
+              <CreateListComponent createNotification={createNotification} />
+            } />
+            <Route path="/myLists" element={
+              <ListListsComponent />
             } />
           </Routes>
         </Content>
