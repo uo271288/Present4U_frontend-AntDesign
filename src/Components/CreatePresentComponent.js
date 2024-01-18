@@ -15,7 +15,7 @@ let CreatePresentComponent = (props) => {
     let [nameValue, setNameValue] = useState("")
     let [descriptionValue, setDescriptionValue] = useState("")
     let [urlValue, setUrlValue] = useState("")
-    let [priceValue, setPriceValue] = useState(0.0)
+    let [priceValue, setPriceValue] = useState("")
     let [listNameValue, setListNameValue] = useState("")
 
     useEffect(() => {
@@ -102,7 +102,7 @@ let CreatePresentComponent = (props) => {
         setNameValue("")
         setDescriptionValue("")
         setUrlValue("")
-        setPriceValue(0.0)
+        setPriceValue("")
         setListNameValue("")
     }
 
