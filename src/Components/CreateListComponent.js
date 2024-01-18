@@ -53,13 +53,13 @@ let SearchFriendsPresentsComponent = (props) => {
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
                 {message.length > 0 && message.map(e => { return <Alert type="error" message={e} showIcon /> })}
-                <Card title="Create a present" style={{ width: "500px" }}>
+                <Card title="Create list" style={{ width: "500px" }}>
                     <Input ref={nameInput} size="large" type="text" placeholder="Name" onChange={(e) => {
                         setNameValue(e.target.value)
                         setMessage([])
                         }} value={nameValue} />
                     {error.name && error.name.map(e => { return <Text type="danger">{e}<br /></Text> })}
-                    <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickCreate}>Create List</Button>
+                    <Button type="primary" style={{ marginTop: "10px" }} block onClick={clickCreate}>Create list</Button>
                 </Card>
             </Col>
         </Row>
