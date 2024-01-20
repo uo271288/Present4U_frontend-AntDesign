@@ -39,12 +39,20 @@ let ListFriendsComponent = (props) => {
         checkInputErrors()
     }, [emailValue, listNameValue])
 
+    let sortByListName = (array) => {
+        return array.slice().sort((a, b) => {
+            return a['listName'].localeCompare(b['listName'])
+        })
+    }
+
     let getFriends = async () => {
         let response = await fetch(backendURL + "/friends?apiKey=" + localStorage.getItem("apiKey"))
 
         if (response.ok) {
             let jsonData = await response.json()
-            setFriends(jsonData)
+            setFriends(jsonData.slice().sort((a, b) => {
+                return a['listName'].localeCompare(b['listName'])
+            }))
         }
     }
 
@@ -110,7 +118,7 @@ let ListFriendsComponent = (props) => {
                     {friends.length <= 0 && <h3 className="errorMessage">No friends</h3>}
                     {friends.length > 0 && <List
                         bordered
-                        dataSource={friends}
+                        dataSource={friends.sort()}
                         renderItem={(friend) => (
                             <List.Item>
                                 <List.Item.Meta
