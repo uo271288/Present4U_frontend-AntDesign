@@ -58,7 +58,7 @@ let ListPresentsChosenByMeComponent = () => {
     return (
         <Row align="middle" justify="center" style={{ minHeight: "70vh" }}>
             <Col>
-                <Card title="Presents chosen" style={{ width: "500px" }}>
+                <Card title="Presents chosen" >
                     {presents.length <= 0 && <h3 className="errorMessage">No presents</h3>}
                     {message.length > 0 && <Alert type="error" message={message.map(e => { return <p className="errorMessage">{e}</p> })} />}
                     {presents.length > 0 && <Table columns={columns} dataSource={presents}></Table>}

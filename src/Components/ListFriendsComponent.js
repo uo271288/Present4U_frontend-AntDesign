@@ -39,12 +39,6 @@ let ListFriendsComponent = (props) => {
         checkInputErrors()
     }, [emailValue, listNameValue])
 
-    let sortByListName = (array) => {
-        return array.slice().sort((a, b) => {
-            return a['listName'].localeCompare(b['listName'])
-        })
-    }
-
     let getFriends = async () => {
         let response = await fetch(backendURL + "/friends?apiKey=" + localStorage.getItem("apiKey"))
 

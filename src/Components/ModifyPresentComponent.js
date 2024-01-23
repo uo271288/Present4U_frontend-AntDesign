@@ -91,6 +91,7 @@ let ModifyPresentComponent = (props) => {
         })
         if (response.ok) {
             createNotification("Present modified successfully")
+            navigate("/myPresents")
         } else {
             let jsonData = await response.json()
             if (Array.isArray(jsonData)) {
@@ -101,8 +102,6 @@ let ModifyPresentComponent = (props) => {
                 setMessage(finalError)
             }
         }
-
-        navigate("/myPresents")
     }
 
     let { Text } = Typography
